@@ -51,15 +51,19 @@ def last_merge():
     
     
     single_buffer_in = buffer_in.explode(index_parts=True)
+
     print('explode')
 
+    single_buffer_gdf = gpd.GeoDataFrame(gpd.GeoSeries(single_buffer_in))
     
-    single_buffer_in['area'] = single_buffer_in['geometry'].area/10000 
-    print('geometry')
+    single_buffer_gdf = single_buffer_gdf.rename(columns={0:'geometry'}).set_geometry('geometry')
+    
+    single_buffer_gdf['area_ha'] = single_buffer_gdf.area/10000
+    print('area')
 
     
 
-    forest = single_buffer_in[single_buffer_in['area'] >= 5000]
+    forest = single_buffer_gdf[single_buffer_gdf['area_ha'] >= 5000]
     print('small areas')
 
     forest.to_file("/dbfs/mnt/strukturparametre/Forest_Denmark_2020_test.gpkg", layer='Forest_Denmark_2020', driver="GPKG")
