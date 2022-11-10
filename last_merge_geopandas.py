@@ -1,6 +1,9 @@
 import geopandas as gpd
 import pandas as pd
 import glob, os
+from shapely.geometry import Point, Polygon
+from shapely.geometry import shape
+from shapely import geometry
 
 
 
@@ -34,14 +37,16 @@ def last_merge():
 
    
 
-    buffer_out = df.buffer(10,resolution=2 )
+    buffer_out = gdf.to_crs(25832).buffer(10)
     print('Buffer out')
 
     fix_union = gpd.geoseries.GeoSeries([geom for geom in buffer_out.unary_union.geoms])
+    
     print('fix union')
     
+    fix_union_utm = fix_union.set_crs('epsg:25832')
 
-    buffer_in = fix_union.buffer(-10,resolution=2 )
+    buffer_in = fix_union_utm.buffer(-10,resolution=2 )
     print('buffer in')
     
     
